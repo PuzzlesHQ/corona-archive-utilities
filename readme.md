@@ -3,9 +3,8 @@
 This was built to support [CoronaLab's](https://github.com/coronalabs) `Corona ARchive` file aka `.car` that is frequently used with the `Corona / Solar2D Game Engine`.
 <br>This library allows you to pack, unpack, and convert to and from the `Corona Archive` a zip file.
 
-Reference Material(s) Used:
-- https://github.com/0BuRner/corona-archiver/blob/master/README.md
-- https://github.com/0BuRner/corona-archiver/blob/master/corona-archiver.py
+
+---
 
 ### Using this in your project
 
@@ -23,6 +22,10 @@ dependencies {
     //... other dependencies
 }
 ```
+
+<br>
+
+---
 
 ### Corona Archive Spec
 
@@ -69,3 +72,7 @@ NUM_OF_ENTRIES: 4-bytes
 
 
 ```
+
+Reference Material(s) Used:
+- https://github.com/0BuRner/corona-archiver/blob/master/README.md
+- https://github.com/0BuRner/corona-archiver/blob/master/corona-archiver.py
