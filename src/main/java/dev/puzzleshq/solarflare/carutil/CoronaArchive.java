@@ -45,7 +45,7 @@ public class CoronaArchive {
     }
 
     public void addFilesFromDir(File file) throws IOException {
-        addFileOrDir(file, "");
+        addFilesFromDir(file, "");
     }
 
     public void addFilesFromDir(File file, String parent) throws IOException {
