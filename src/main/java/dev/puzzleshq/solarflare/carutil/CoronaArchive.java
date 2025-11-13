@@ -75,7 +75,7 @@ public class CoronaArchive {
         }
 
         Queue<Object[]> childFiles = new ArrayDeque<>();
-        childFiles.add(new Object[]{"", file});
+        childFiles.add(new Object[]{parent, file});
         while (!childFiles.isEmpty()) {
             Object[] childFile = childFiles.poll();
             String nParent = ((String)childFile[0]);
@@ -83,7 +83,9 @@ public class CoronaArchive {
 
             if (nFile.isDirectory()) {
                 for (File listFile : Objects.requireNonNull(nFile.listFiles())) {
-                    childFiles.add(new Object[]{nParent + "/" + nFile.getName(), listFile});
+                    if (!nParent.isEmpty())
+                        nParent += "/";
+                    childFiles.add(new Object[]{nParent + nFile.getName(), listFile});
                 }
                 continue;
             }
