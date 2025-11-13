@@ -70,8 +70,10 @@ public class CoronaArchive {
         childFiles.add(file);
         while (!childFiles.isEmpty()) {
             File childFile = childFiles.poll();
-            if (childFile.isDirectory())
+            if (childFile.isDirectory()) {
                 childFiles.addAll(Arrays.asList(Objects.requireNonNull(childFile.listFiles())));
+                continue;
+            }
             addFileOrDir(childFile);
         }
     }
