@@ -44,13 +44,18 @@ public class CoronaArchive {
         return CoronaArchiveReader.fromFile(file);
     }
 
-    public void addFileOrDir(File file) throws IOException {
+    public void addFilesFromDir(File file) throws IOException {
         addFileOrDir(file, "");
     }
 
-    public void addFileOrDir(File file, String parent) throws IOException {
+    public void addFilesFromDir(File file, String parent) throws IOException {
         if (!file.exists())
             throw new IOException("File or Directory does not exist! -> \"" + file.getAbsolutePath() + "\"");
+
+        if ("/".equals(parent))
+            parent = "";
+        if (!parent.isEmpty())
+            parent += "/";
 
         if (file.isFile()) {
             FileInputStream fileInputStream = new FileInputStream(file);
@@ -63,10 +68,60 @@ public class CoronaArchive {
             fileInputStream.close();
 
             CoronaArchiveEntry entry = new CoronaArchiveEntry();
-            if ("/".equals(parent))
-                parent = "";
-            if (!parent.isEmpty())
-                parent += "/";
+            entry.setName(parent + file.getName());
+            entry.setContents(bytes);
+
+            this.addEntry(entry);
+            return;
+        }
+
+        Queue<Object[]> childFiles = new ArrayDeque<>();
+
+        for (File listFile : Objects.requireNonNull(file.listFiles())) {
+            childFiles.add(new Object[]{parent, listFile});
+        }
+
+        while (!childFiles.isEmpty()) {
+            Object[] childFile = childFiles.poll();
+            StringBuilder nParent = new StringBuilder(((String) childFile[0]));
+            File nFile = ((File) childFile[1]);
+
+            if (nFile.isDirectory()) {
+                for (File listFile : Objects.requireNonNull(nFile.listFiles())) {
+                    if (nParent.length() > 0)
+                        nParent.append("/");
+                    childFiles.add(new Object[]{nParent + nFile.getName(), listFile});
+                }
+                continue;
+            }
+            addFileOrDir(nFile, nParent.toString());
+        }
+    }
+
+    public void addFileOrDir(File file) throws IOException {
+        addFileOrDir(file, "");
+    }
+
+    public void addFileOrDir(File file, String parent) throws IOException {
+        if (!file.exists())
+            throw new IOException("File or Directory does not exist! -> \"" + file.getAbsolutePath() + "\"");
+
+        if ("/".equals(parent))
+            parent = "";
+        if (!parent.isEmpty())
+            parent += "/";
+
+        if (file.isFile()) {
+            FileInputStream fileInputStream = new FileInputStream(file);
+            DataInputStream dataInputStream = new DataInputStream(fileInputStream);
+
+            byte[] bytes = new byte[fileInputStream.available()];
+            dataInputStream.readFully(bytes, 0, bytes.length);
+
+            dataInputStream.close();
+            fileInputStream.close();
+
+            CoronaArchiveEntry entry = new CoronaArchiveEntry();
             entry.setName(parent + file.getName());
             entry.setContents(bytes);
 
@@ -78,18 +133,18 @@ public class CoronaArchive {
         childFiles.add(new Object[]{parent, file});
         while (!childFiles.isEmpty()) {
             Object[] childFile = childFiles.poll();
-            String nParent = ((String)childFile[0]);
+            StringBuilder nParent = new StringBuilder(((String) childFile[0]));
             File nFile = ((File) childFile[1]);
 
             if (nFile.isDirectory()) {
                 for (File listFile : Objects.requireNonNull(nFile.listFiles())) {
-                    if (!nParent.isEmpty())
-                        nParent += "/";
+                    if (nParent.length() > 0)
+                        nParent.append("/");
                     childFiles.add(new Object[]{nParent + nFile.getName(), listFile});
                 }
                 continue;
             }
-            addFileOrDir(nFile, nParent);
+            addFileOrDir(nFile, nParent.toString());
         }
     }
 
