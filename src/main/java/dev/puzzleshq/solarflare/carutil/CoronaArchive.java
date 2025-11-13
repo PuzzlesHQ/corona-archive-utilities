@@ -45,23 +45,14 @@ public class CoronaArchive {
     }
 
     public void addFileOrDir(File file) throws IOException {
+        addFileOrDir(file, "");
+    }
+
+    public void addFileOrDir(File file, String parent) throws IOException {
         if (!file.exists())
             throw new IOException("File or Directory does not exist! -> \"" + file.getAbsolutePath() + "\"");
 
-        Queue<Object[]> childFiles = new ArrayDeque<>();
-        childFiles.add(new Object[]{"", file});
-        while (!childFiles.isEmpty()) {
-            Object[] childFile = childFiles.poll();
-            String parent = ((String)childFile[0]);
-            File cFile = ((File) childFile[1]);
-
-            if (cFile.isDirectory()) {
-                for (File listFile : Objects.requireNonNull(cFile.listFiles())) {
-                    childFiles.add(new Object[]{parent + "/" + cFile.getName(), listFile});
-                }
-                continue;
-            }
-
+        if (file.isFile()) {
             FileInputStream fileInputStream = new FileInputStream(file);
             DataInputStream dataInputStream = new DataInputStream(fileInputStream);
 
@@ -72,11 +63,31 @@ public class CoronaArchive {
             fileInputStream.close();
 
             CoronaArchiveEntry entry = new CoronaArchiveEntry();
-            entry.setName(parent + "/" + cFile.getName());
+            if ("/".equals(parent))
+                parent = "";
+            if (!parent.isEmpty())
+                parent += "/";
+            entry.setName(parent + file.getName());
             entry.setContents(bytes);
 
             this.addEntry(entry);
             return;
+        }
+
+        Queue<Object[]> childFiles = new ArrayDeque<>();
+        childFiles.add(new Object[]{"", file});
+        while (!childFiles.isEmpty()) {
+            Object[] childFile = childFiles.poll();
+            String nParent = ((String)childFile[0]);
+            File nFile = ((File) childFile[1]);
+
+            if (nFile.isDirectory()) {
+                for (File listFile : Objects.requireNonNull(nFile.listFiles())) {
+                    childFiles.add(new Object[]{nParent + "/" + nFile.getName(), listFile});
+                }
+                continue;
+            }
+            addFileOrDir(nFile, nParent);
         }
     }
 
