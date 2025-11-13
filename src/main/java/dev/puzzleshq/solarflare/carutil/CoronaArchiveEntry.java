@@ -30,7 +30,7 @@ public class CoronaArchiveEntry {
         return new String(contents);
     }
 
-    public void export(File file) throws IOException {
+    public void exportAs(File file) throws IOException {
         FileOutputStream fileOutputStream = new FileOutputStream(file);
         fileOutputStream.write(contents);
         fileOutputStream.close();

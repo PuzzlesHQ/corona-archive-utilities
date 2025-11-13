@@ -1,5 +1,8 @@
 package dev.puzzleshq.solarflare.carutil;
 
+import dev.puzzleshq.solarflare.carutil.io.CoronaArchivePacker;
+import dev.puzzleshq.solarflare.carutil.io.CoronaArchiveReader;
+
 import java.io.*;
 import java.util.*;
 
@@ -31,6 +34,14 @@ public class CoronaArchive {
             fileOutputStream.write(entry.getContents());
             fileOutputStream.close();
         }
+    }
+
+    public void exportAs(File file) throws IOException {
+        CoronaArchivePacker.pack(this, file);
+    }
+
+    public static CoronaArchive importFrom(File file) throws IOException {
+        return CoronaArchiveReader.fromFile(file);
     }
 
     public void addFileOrDir(File file) throws IOException {
