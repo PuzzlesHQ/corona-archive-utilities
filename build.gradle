@@ -80,9 +80,9 @@ publishing {
                     }
                 }
                 scm {
-                    connection = "${p_git}.git"
-                    developerConnection = "${p_git}.git"
-                    url = "${p_git}.git"
+                    connection = 'https://github.com/PuzzlesHQ/corona-archive-util.git'
+                    developerConnection = 'https://github.com/PuzzlesHQ/corona-archive-util.git'
+                    url = 'https://github.com/PuzzlesHQ/corona-archive-util.git'
                 }
             }
         }
